@@ -1,0 +1,74 @@
+{
+  "version": "1.0",
+  "description": "Catálogo de comandos, intenções e parâmetros suportados pelo sistema",
+  "intents": [
+    {
+      "id": "ajustar_parametro",
+      "description": "Ajusta o valor de um parâmetro do equipamento",
+      "examples": [
+        "ajusta a frequência para 5 Hz",
+        "aumenta a pressão para 120",
+        "define o volume para 50 mililitros",
+        "muda a temperatura para 37 graus"
+      ]
+    },
+    {
+      "id": "consultar_parametro",
+      "description": "Consulta o valor atual de um parâmetro",
+      "examples": [
+        "qual a frequência atual?",
+        "me diz a pressão",
+        "qual o volume configurado?"
+      ]
+    },
+    {
+      "id": "comando_invalido",
+      "description": "Comando não reconhecido ou sem informação suficiente",
+      "examples": [
+        "muda o volume",
+        "ajusta",
+        "xpto blargh"
+      ]
+    }
+  ],
+  "parameters": [
+    {
+      "id": "frequencia",
+      "unit": "Hz",
+      "range_min": 0.5,
+      "range_max": 100,
+      "requires_confirmation": false,
+      "aliases": ["frequência", "freq"]
+    },
+    {
+      "id": "pressao",
+      "unit": "mmHg",
+      "range_min": 60,
+      "range_max": 200,
+      "requires_confirmation": true,
+      "aliases": ["pressão", "press"]
+    },
+    {
+      "id": "volume",
+      "unit": "ml",
+      "range_min": 0,
+      "range_max": 1000,
+      "requires_confirmation": false,
+      "aliases": ["vol"]
+    },
+    {
+      "id": "temperatura",
+      "unit": "°C",
+      "range_min": 34,
+      "range_max": 42,
+      "requires_confirmation": true,
+      "aliases": ["temp"]
+    }
+  ],
+  "status_codes": {
+    "OK": "Extração bem sucedida",
+    "AMBIGUO": "Comando com múltiplas interpretações possíveis",
+    "INCOMPLETO": "Faltam informações necessárias",
+    "INVALIDO": "Comando não reconhecido"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "version": "1.0",
+  "test_cases": [
+    {
+      "id": "TC001",
+      "category": "valido_simples",
+      "input": "ajusta a frequência para 5 Hz",
+      "expected": {
+        "intent": "ajustar_parametro",
+        "parameter": "frequencia",
+        "value": 5.0,
+        "unit": "Hz",
+        "status": "OK"
+      }
+    },
+    {
+      "id": "TC002",
+      "category": "unidade_omitida",
+      "input": "aumenta pressão para 120",
+      "expected": {
+        "intent": "ajustar_parametro",
+        "parameter": "pressao",
+        "value": 120.0,
+        "unit": "mmHg",
+        "status": "OK"
+      }
+    },
+    {
+      "id": "TC003",
+      "category": "incompleto",
+      "input": "muda o volume",
+      "expected": {
+        "intent": "ajustar_parametro",
+        "parameter": "volume",
+        "value": null,
+        "status": "INCOMPLETO"
+      }
+    },
+    {
+      "id": "TC004",
+      "category": "ambiguo",
+      "input": "ajusta para 5",
+      "expected": {
+        "status": "INCOMPLETO"
+      }
+    },
+    {
+      "id": "TC005",
+      "category": "erro_ortografico",
+      "input": "ajusta a frekencia pra cinco Hz",
+      "expected": {
+        "intent": "ajustar_parametro",
+        "parameter": "frequencia",
+        "value": 5.0,
+        "unit": "Hz",
+        "status": "OK"
+      }
+    },
+    {
+      "id": "TC006",
+      "category": "audio_confuso",
+      "input": "Não sei, aumenta a pressão, não, muda frequência, não. Vou querer volume 50 ml.",
+      "expected": {
+        "intent": "ajustar_parametro",
+        "parameter": "volume",
+        "value": 50.0,
+        "unit": "ml",
+        "status": "OK"
+      }
+    },
+    {
+      "id": "TC007",
+      "category": "invalido",
+      "input": "xpto blargh 123",
+      "expected": {
+        "status": "INVALIDO"
+      }
+    },
+    {
+      "id": "TC008",
+      "category": "decimal",
+      "input": "dois ponto cinco Hz",
+      "expected": {
+        "intent": "ajustar_parametro",
+        "parameter": "frequencia",
+        "value": 2.5,
+        "unit": "Hz",
+        "status": "OK"
+      }
+    }
+  ]
+}
