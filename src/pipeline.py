@@ -34,5 +34,16 @@ if __name__ == "__main__":
     print("=== ÁUDIO CONFUSO ===")
     processar_audio("audio_samples/confuso.m4a")
 
-    print("=== TESTE COM TEXTO ===")
-    processar("ajusta a frequência para 5 Hz")
+    print("=== CASOS DE BORDA ===")
+    casos_borda = [
+        "audio_samples/audiovazio.m4a",
+        "audio_samples/freq9999hz.m4a",
+        "audio_samples/doiscomandos.m4a",
+        "audio_samples/inglesportugues.m4a",
+        "audio_samples/negativo.m4a",
+        "audio_samples/unidadeerrada.m4a",
+    ]
+
+    for audio in casos_borda:
+        print(f"\n{'='*50}")
+        processar_audio(audio)
