@@ -28,8 +28,11 @@ def processar(texto: str):
     return resultado
 
 if __name__ == "__main__":
-    print("=== TESTE COM ÁUDIO ===")
+    print("=== ÁUDIO LIMPO ===")
     processar_audio("audio_samples/5hz.m4a")
+
+    print("=== ÁUDIO CONFUSO ===")
+    processar_audio("audio_samples/confuso.m4a")
 
     print("=== TESTE COM TEXTO ===")
     processar("ajusta a frequência para 5 Hz")
