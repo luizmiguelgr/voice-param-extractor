@@ -1,3 +1,4 @@
+import os
 from src.normalizer import normalizar
 from src.extractor import extract
 from src.stt import transcrever
@@ -16,34 +17,19 @@ def processar_audio(caminho_audio: str):
     
     return resultado
 
-def processar(texto: str):
-    print(f"Entrada:     {texto}")
-    
-    normalizado = normalizar(texto)
-    print(f"Normalizado: {normalizado}")
-    
-    resultado = extract(normalizado)
-    print(f"Saída:\n{resultado.model_dump_json(indent=2)}\n")
-    
-    return resultado
-
 if __name__ == "__main__":
-    print("=== ÁUDIO LIMPO ===")
-    processar_audio("audio_samples/5hz.m4a")
+    pasta = "audio_samples"
+    extensoes = (".wav", ".mp3", ".m4a", ".ogg", ".flac")
 
-    print("=== ÁUDIO CONFUSO ===")
-    processar_audio("audio_samples/confuso.m4a")
-
-    print("=== CASOS DE BORDA ===")
-    casos_borda = [
-        "audio_samples/audiovazio.m4a",
-        "audio_samples/freq9999hz.m4a",
-        "audio_samples/doiscomandos.m4a",
-        "audio_samples/inglesportugues.m4a",
-        "audio_samples/negativo.m4a",
-        "audio_samples/unidadeerrada.m4a",
+    audios = [
+        f for f in sorted(os.listdir(pasta))
+        if f.lower().endswith(extensoes)
     ]
 
-    for audio in casos_borda:
-        print(f"\n{'='*50}")
-        processar_audio(audio)
+    if not audios:
+        print("Nenhum áudio encontrado!")
+    else:
+        for nome in audios:
+            caminho = os.path.join(pasta, nome)
+            processar_audio(caminho)
+            print("=" * 50)

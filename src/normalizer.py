@@ -1,6 +1,6 @@
 import re
 
-#palavras técnicas com grafia errada
+# Palavras técnicas com grafia errada
 CORRECOES = {
     "frekencia": "frequência",
     "frequencia": "frequência",
@@ -14,7 +14,7 @@ CORRECOES = {
     "mililitros": "ml",
 }
 
-#Números por extenso
+# Números por extenso
 
 NUMEROS = {
     "zero": "0", "um": "1", "dois": "2", "três": "3", "tres": "3",
@@ -29,31 +29,18 @@ NUMEROS = {
 def normalizar(texto: str) -> str:
     texto = texto.lower().strip()
 
-    #Converte números por extenso (frases primeiro, depois palavras)
+    # Converte números por extenso (frases primeiro, depois palavras)
     for extenso, numero in sorted(NUMEROS.items(), key=lambda x: -len(x[0])):
         texto = re.sub(rf'\b{extenso}\b', numero, texto, flags=re.IGNORECASE)
     
-    #Corrige as palavras técnicas
+    # Corrige as palavras técnicas
     for palavras_erradas, palavras_certas in CORRECOES.items():
         texto = re.sub(rf'\b{palavras_erradas}\b', palavras_certas, texto, flags=re.IGNORECASE)
 
-    #Remove espaços duplos
+    # Remove espaços duplos
     texto = re.sub(r'\s+', ' ', texto).strip()
 
-    # separador de milhar europeu (9.999 → 9999)
+    # Separador de milhar europeu (de 9.999 para 9999)
     texto = re.sub(r'(\d+)\.(\d{3})\b', r'\1\2', texto)
 
     return texto
-
-# Teste rápido
-if __name__ == "__main__":
-    testes = [
-        "ajusta a frekencia pra cinco Hz",
-        "aumenta presao pra cento e vinte",
-        "muda o volumme pra cinquenta mililitros",
-    ]
-
-    for t in testes:
-        print(f"Antes:  {t}")
-        print(f"Depois: {normalizar(t)}")
-        print()
