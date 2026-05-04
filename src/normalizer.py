@@ -40,7 +40,7 @@ def normalizar(texto: str) -> str:
     #Remove espaços duplos
     texto = re.sub(r'\s+', ' ', texto).strip()
 
-    # Corrige separador de milhar europeu (9.999 → 9999)
+    # separador de milhar europeu (9.999 → 9999)
     texto = re.sub(r'(\d+)\.(\d{3})\b', r'\1\2', texto)
 
     return texto
