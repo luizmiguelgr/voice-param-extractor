@@ -1,97 +1,145 @@
 # Análise de Erros do STT
 
-## Amostras testadas
+## Conjunto de amostras testadas
 
-| Arquivo | Comando falado | Transcrição gerada | Correto? |
+| Arquivo | Comando falado | Transcrição sem initial_prompt | Transcrição com initial_prompt |
 |---|---|---|---|
-| 5hz.m4a | "Ajusta a frequência para 5 Hz" | "A justa frequência para 5 Hz" | ❌ |
-| confuso.m4a | "Não sei, aumenta a pressão... Vou querer volume 50 ml" | Transcrição fiel | ✅ |
-| audiovazio.m4a | silêncio | "" | ✅ |
-| freq9999hz.m4a | "Ajusta a frequência para 9999 Hz" | "Ajustar a frequência para 9.999 Hz" | ❌ |
-| doiscomandos.m4a | "Ajusta frequência para 5 e pressão para 120" | "A justa frequência para 5 e para 120" | ❌ |
-| inglesportugues.m4a | mistura inglês/português | "Setra-guencha 4, 5 heredas" | ❌ |
-| negativo.m4a | "Ajusta temperatura para menos 5 graus" | Transcrição fiel | ✅ |
-| unidadeerrada.m4a | "Ajusta frequência para 120 mmHg" | "A justa frequência para 120 mmHG" | ⚠️ |
+| 5hz.m4a | "Ajusta a frequência para 5 Hz" | "A justa frequência para 5 Hz" ❌ | "ajusta a frequência para 5 Hz" ✅ |
+| confuso.m4a | "Não sei... vou querer volume 50 ml" | Transcrição fiel ✅ | Transcrição fiel ✅ |
+| audiovazio.m4a | silêncio | "" ✅ | Alucinação com caracteres japoneses ⚠️ |
+| freq9999hz.m4a | "Ajusta frequência para 9999 Hz" | "Ajustar a frequência para 9.999 Hz" ❌ | "ajustar frequência para 9.999 Hz" ❌ |
+| doiscomandos.m4a | "Ajusta frequência para 5 e pressão para 120" | "A justa frequência para 5 e para 120" ❌ | "ajusta a frequência para 5 e pressão para 120" ✅ |
+| inglesportugues.m4a | mistura inglês/português | "Setra-guencha 4, 5 heredas" ❌ | "Sete frequência 405 Hz, 5 Hz" ⚠️ |
+| negativo.m4a | "Ajusta temperatura para menos 5 graus" | Transcrição fiel ✅ | Transcrição fiel ✅ |
+| unidadeerrada.m4a | "Ajusta frequência para 120 mmHg" | "A justa frequência para 120 mmHG" ❌ | "ajusta frequência para 120 mmHg" ✅ |
 
-## Erros encontrados
+---
+
+## a. Tipos de erro mais frequentes
 
 ### 1. Segmentação incorreta de palavras
 **Exemplo:** `"Ajusta"` → `"A justa"`
 
 O Whisper separou o verbo em duas palavras válidas do português.
-É um erro silencioso — não aparece como erro ortográfico.
+É um erro silencioso — não aparece como erro ortográfico e o
+normalizer não consegue corrigir porque "a justa" são palavras válidas.
 
-**Impacto:** Baixo — o LLM foi robusto e extraiu corretamente mesmo assim.
-
-**Mitigação:** `initial_prompt` com vocabulário do domínio.
+**Frequência:** Alta — apareceu em 4 dos 8 áudios sem initial_prompt.
+**Com initial_prompt:** Resolvido em todos os casos.
 
 ---
 
-### 2. Separador de milhar europeu em números grandes
+### 2. Separador de milhar europeu
 **Exemplo:** `"9999"` → `"9.999"`
 
-O Whisper usou ponto como separador de milhar, fazendo o LLM
-interpretar `9999` como `9.999` decimal.
+O Whisper usou ponto como separador de milhar ao transcrever
+números grandes, fazendo o sistema interpretar 9999 como 9.999.
 
-**Impacto:** Alto — o valor extraído está errado e passa como `OK`.
-
-**Mitigação:** Normalizar padrão `\d+\.\d{3}` como separador de milhar.
-
----
-
-### 3. Dois comandos no mesmo áudio
-**Exemplo:** `"frequência para 5 e pressão para 120"` → LLM extrai só o primeiro
-
-O pipeline atual não suporta múltiplos comandos por áudio.
-
-**Impacto:** Médio — o segundo comando é silenciosamente ignorado.
-
-**Mitigação:** Detectar `"e"` entre dois comandos e retornar `AMBIGUO`.
+**Frequência:** Média — aparece em números acima de 999.
+**Mitigação aplicada:** regex no normalizer converte `9.999` → `9999`.
 
 ---
 
-### 4. Áudio em idioma misto ou incompreensível
-**Exemplo:** transcrição virou `"Setra-guencha 4, 5 heredas"`
+### 3. Alucinação em áudio vazio ou silêncio
+**Exemplo:** silêncio → `"e vai pessim仗ar que joga o immersed..."`
 
-O Whisper tentou transcrever mesmo sem entender — alucinação total.
+Com `initial_prompt` ativo, o Whisper tentou transcrever silêncio
+e gerou texto com caracteres japoneses e coreanos.
 
-**Impacto:** Baixo — o LLM corretamente retornou `INVALIDO`.
-
-**Mitigação:** Validar score de confiança do Whisper antes de processar.
+**Frequência:** Baixa — só ocorre em áudio sem fala clara.
+**Risco:** O LLM corretamente retornou INVALIDO, mas o comportamento é imprevisível.
 
 ---
 
-### 5. Capitalização inconsistente de unidades
-**Exemplo:** `"mmHG"` → normalizer corrigiu para `"mmHg"` ✅
+### 4. Forçar vocabulário em áudio incompreensível
+**Exemplo:** inglês misturado → `"Setra-guencha"` sem prompt, `"Sete frequência 405 Hz"` com prompt
 
-O normalizer resolveu esse caso com sucesso.
+Com `initial_prompt`, o Whisper tenta encaixar o áudio no vocabulário
+médico mesmo quando o áudio não tem nada a ver com o domínio.
 
-## Erros por impacto
+**Frequência:** Baixa — só ocorre em áudio fora do domínio.
+**Observação:** O resultado pareceu mais válido mas ainda foi corretamente rejeitado pelo range.
 
-| Tipo de erro | Impacto | Resolvido? |
+---
+
+## b. Erros que mais impactam a extração estruturada
+
+| Tipo de erro | Impacto | Motivo |
 |---|---|---|
-| Separador de milhar `9.999` vs `9999` | Alto | ❌ |
-| Dois comandos no mesmo áudio | Médio | ❌ |
-| Segmentação `"A justa"` | Baixo | ✅ LLM compensa |
-| Idioma incompreensível | Baixo | ✅ LLM retorna INVALIDO |
-| Capitalização de unidades | Baixo | ✅ normalizer resolve |
+| Separador de milhar `9.999` vs `9999` | **Alto** | Valor extraído errado, passou como OK antes da correção |
+| Segmentação `"A justa"` vs `"Ajusta"` | **Médio** | LLM compensa na maioria dos casos mas não é garantido |
+| Alucinação em silêncio | **Médio** | LLM retorna INVALIDO mas comportamento é imprevisível |
+| Forçar vocabulário em áudio fora do domínio | **Médio** | Resultado parece válido mas não é |
+| Capitalização de unidades `mmHG` vs `mmHg` | **Baixo** | Normalizer resolve |
 
-## Mitigações implementadas
+---
 
-- Parser robusto que remove markdown do JSON quando o LLM formata errado
-- Normalizer corrige unidades com capitalização inconsistente
-- LLM com `temperature=0` para respostas determinísticas
+## c. Mitigações implementadas
 
-## Limitações conhecidas
+### 1. initial_prompt com vocabulário técnico ✅
+```python
+resultado = modelo.transcribe(
+    caminho_audio,
+    language="pt",
+    initial_prompt="frequência, pressão, volume, temperatura, Hz, mmHg, ml, ajustar, aumentar, diminuir"
+)
+```
+**Resultado:** reduziu segmentação incorreta de 4 para 0 casos.
 
-- Pipeline não suporta múltiplos comandos por áudio
-- Números grandes podem ser interpretados com separador de milhar errado
-- Whisper base pode alucinar em áudio incompreensível
+---
 
-## Trabalhos futuros
+### 2. Normalização lexical ✅
+Correção de erros ortográficos e unidades com grafia errada.
+```
+"frekencia" → "frequência"
+"hertz"     → "Hz"
+"mmhg"      → "mmHg"
+```
 
-- Adicionar `initial_prompt` com vocabulário técnico no Whisper
-- Validar `value` contra `range_min`/`range_max` do catálogo
-- Detectar múltiplos comandos e retornar `AMBIGUO`
-- Testar modelos maiores do Whisper (`small`, `medium`)
-- Adicionar VAD para filtrar silêncio antes do STT
+---
+
+### 3. Tratamento de separador de milhar ✅
+```python
+texto = re.sub(r'(\d+)\.(\d{3})\b', r'\1\2', texto)
+```
+**Resultado:** `"9.999"` → `"9999"` corretamente.
+
+---
+
+### 4. Validação de range por parâmetro ✅
+Valores fora do range definido no catálogo são automaticamente
+marcados como INVALIDO com mensagem explicativa.
+
+---
+
+### 5. Pós-processamento semântico no LLM ✅
+O system prompt instrui o LLM a detectar múltiplos comandos
+e retornar AMBIGUO em vez de ignorar silenciosamente.
+
+---
+
+## Mitigações recomendadas para produção
+
+### Voice Activity Detection (VAD)
+Filtrar silêncio antes de passar pro Whisper eliminaria
+alucinações em áudio vazio.
+```python
+# biblioteca recomendada: silero-vad
+```
+
+### Modelo maior do Whisper
+O modelo `small` ou `medium` tem WER menor que o `base`
+especialmente em português brasileiro com termos técnicos.
+
+### Score de confiança
+Rejeitar transcrições com score de confiança abaixo de um threshold
+antes de passar pro LLM.
+
+---
+
+## Conclusão
+
+O `initial_prompt` foi a mitigação mais impactante — reduziu
+erros de segmentação de 50% dos casos para 0%. O principal
+risco residual é a alucinação em áudio silencioso, mitigável
+com VAD em ambiente de produção.

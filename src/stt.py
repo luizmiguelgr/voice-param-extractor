@@ -8,7 +8,11 @@ def transcrever(caminho_audio: str) -> str:
     if not os.path.exists(caminho_audio):
         raise FileNotFoundError(f"Arquivo não encontrado: {caminho_audio}")
     
-    resultado = modelo.transcribe(caminho_audio, language="pt")
+    resultado = modelo.transcribe(
+        caminho_audio,
+        language="pt",
+        initial_prompt="frequência, pressão, volume, temperatura, Hz, mmHg, ml, ajustar, aumentar, diminuir"
+    )
     return resultado["text"].strip()
 
 if __name__ == "__main__":
