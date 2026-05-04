@@ -1,7 +1,6 @@
 import whisper
 import os
 
-# Carrega o modelo — "base" é leve e bom para testes
 modelo = whisper.load_model("base")
 
 def transcrever(caminho_audio: str) -> str:

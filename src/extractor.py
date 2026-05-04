@@ -62,6 +62,8 @@ def validar_range(resultado: ExtractionResult) -> ExtractionResult:
         param = PARAMETROS.get(param_normalizado)
 
         if param:
+            resultado.requires_confirmation = param["requires_confirmation"]
+
             if resultado.value < param["range_min"] or resultado.value > param["range_max"]:
                 resultado.status = "INVALIDO"
                 resultado.requires_confirmation = True

@@ -37,7 +37,7 @@
       "unit": "Hz",
       "range_min": 0.5,
       "range_max": 100,
-      "requires_confirmation": false,
+      "requires_confirmation": true,
       "aliases": ["frequência", "freq"]
     },
     {
