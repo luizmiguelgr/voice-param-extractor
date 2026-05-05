@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  pipeline:
+    build: .
+    env_file: .env
+    volumes:
+      - ./audio_samples:/app/audio_samples
+      - ./data:/app/data
+      - ./results:/app/results
