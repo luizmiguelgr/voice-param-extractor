@@ -46,5 +46,5 @@ https://github.com/luizmiguelgr/voice-param-extractor/blob/main/.env.example
 ### Docker (qualquer sistema operacional)
 https://github.com/luizmiguelgr/voice-param-extractor/blob/main/requirements.docker.txt <br>
 https://github.com/luizmiguelgr/voice-param-extractor/blob/main/.env.example <br>
-https://github.com/luizmiguelgr/voice-param-extractor/blob/main/Dockerfile
+https://github.com/luizmiguelgr/voice-param-extractor/blob/main/Dockerfile <br>
 https://github.com/luizmiguelgr/voice-param-extractor/blob/main/docker-compose.yml
