@@ -6,7 +6,7 @@ Pipeline experimental de voz para extração estruturada de parâmetros em portu
 
 Componente de IA que recebe comandos de voz curtos em português brasileiro, transcreve via STT e extrai parâmetros estruturados no formato JSON, com validação de schema e tratamento de casos ambíguos, incompletos e críticos.
 
-O pipeline processa automaticamente todos os arquivos de áudio da pasta `audio_samples/` — sem necessidade de digitar nomes de arquivos ou comandos de texto.
+O pipeline processa automaticamente todos os arquivos de áudio da pasta `audio_samples/`.
 
 ## Pipeline
 
@@ -45,15 +45,15 @@ voice-param-extractor/
 
 ## Instalação e execução
 
-### Opção 1 — Docker (recomendado para qualquer sistema operacional)
+### Opção 1 — Docker (recomendado para qualquer SO)
 
-O Docker garante ambiente idêntico em qualquer máquina, independente do sistema operacional.
+Ambiente idêntico em qualquer sistema operacional.
 
 ```bash
 git clone https://github.com/luizmiguelgr/voice-param-extractor
 cd voice-param-extractor
 cp .env.example .env
-# Edite o .env e adicione sua GROQ_API_KEY
+# Edite o .env e adicione sua GROQ_API_KEY ou OPENAI_API_KEY
 docker compose run pipeline python -m src.pipeline
 ```
 
@@ -62,7 +62,7 @@ Para rodar os testes:
 docker compose run pipeline python -m pytest tests/ -v
 ```
 
-### Opção 2 — Ambiente local (Windows)
+### Opção 2 — Ambiente Windows (com requirements.txt)
 
 ```bash
 git clone https://github.com/luizmiguelgr/voice-param-extractor
