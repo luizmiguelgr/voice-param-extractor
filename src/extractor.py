@@ -21,11 +21,11 @@ class ExtractionResult(BaseModel):
     intent: str  # o que o user quer fazer
     parameter: Optional[str] = None # parâmetro (freq, pressão)
     value: Optional[float] = None   # valor
-    unit: Optional[str] = None      #hz, mmHg...
-    status: str                     #ok, ambiguo, incpompleto, inválido
+    unit: Optional[str] = None      # hz, mmHg...
+    status: str                     # ok, ambiguo, incpompleto, inválido
     requires_confirmation: bool = False
-    validation_errors: list = []    #erros encontrados
-    notes: Optional[str] = None     #observações
+    validation_errors: list = []    # erros encontrados
+    notes: Optional[str] = None     # observações
 
 SYSTEM_PROMPT = """
 você é um sistema de extração de parâmetros para <equipamentos médicos>.
@@ -96,21 +96,9 @@ def extract(text: str) -> ExtractionResult:
         return validar_range(ExtractionResult(**data))
     except (json.JSONDecodeError, ValidationError) as e:
         return ExtractionResult(
-            intent="comando_inválido",
+            intent="comando_invalido",
             status="INVALIDO",
-            validation_erros=[str(e)],
+            validation_errors=[str(e)],
             notes=f"Falha no parsing resposta do modelo: {raw}"
             #parsing = análise sintática
         )
-    
-if __name__ == "__main__":
-    testes = [
-        "Ajusta a frequência para 5 hertz",
-        "aumenta pressão pra 120",
-        "muda o volume"
-    ]
-
-    for texto in testes:
-        print(f"\nEntrada: {texto}")
-        resultado = extract(texto)
-        print(resultado.model_dump_json(indent=2))

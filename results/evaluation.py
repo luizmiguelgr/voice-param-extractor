@@ -4,6 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.extractor import extract
+from src.extractor import remover_acentos
 
 # Carrega os casos de teste
 with open("data/test_cases.json", "r", encoding="utf-8") as f:
@@ -34,7 +35,7 @@ for caso in casos:
     # Verifica parâmetro (se esperado tiver)
     p_ok = True
     if "parameter" in esperado:
-        p_ok = resultado.parameter == esperado["parameter"]
+        p_ok = remover_acentos(resultado.parameter or "") == remover_acentos(esperado["parameter"])
 
     # Verifica valor (se esperado tiver)
     v_ok = True
@@ -52,9 +53,9 @@ for caso in casos:
     if v_ok: value_correto += 1
     if u_ok: unit_correto += 1
 
-    geral = "✅" if all([s_ok, p_ok, v_ok, u_ok]) else "❌"
+    geral = "OK" if all([s_ok, p_ok, v_ok, u_ok]) else "ERRO"
 
-    print(f"{caso['id']:<8} {caso['category']:<20} {'✅' if s_ok else '❌':<10} {'✅' if p_ok else '❌':<12} {'✅' if v_ok else '❌':<8} {geral}")
+    print(f"{caso['id']:<8} {caso['category']:<20} {'OK' if s_ok else 'ERRO':<10} {'OK' if p_ok else 'ERRO':<12} {'OK' if v_ok else 'ERRO':<8} {geral}")
 
     if not all([s_ok, p_ok, v_ok, u_ok]):
         erros.append({

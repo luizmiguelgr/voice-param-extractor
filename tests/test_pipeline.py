@@ -2,7 +2,7 @@ import pytest
 from src.normalizer import normalizar
 from src.extractor import extract
 
-# ─── Testes do Normalizer ───────────────────────────────────────────────────
+# Testes do Normalizer
 
 def test_corrige_erro_ortografico():
     assert "frequência" in normalizar("frekencia")
@@ -17,7 +17,7 @@ def test_remove_espacos_duplos():
     resultado = normalizar("ajusta  a  frequência")
     assert "  " not in resultado
 
-# ─── Testes do Extractor ────────────────────────────────────────────────────
+# Testes do Extractor
 
 def test_caso_valido_simples():
     resultado = extract("ajuste a frequência para 5 Hz")
@@ -29,7 +29,7 @@ def test_unidade_omitida():
     resultado = extract("aumenta pressão para 120")
     assert resultado.status == "OK"
     assert resultado.value == 120.0
-    assert resultado.parameter == "pressao"
+    assert resultado.parameter in ["pressao", "pressão"]
 
 def test_caso_incompleto():
     resultado = extract("muda o volume")

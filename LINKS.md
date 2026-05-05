@@ -38,5 +38,13 @@ https://github.com/luizmiguelgr/voice-param-extractor/blob/main/src/extractor.py
 https://github.com/luizmiguelgr/voice-param-extractor/tree/main/audio_samples
 
 ## Configuração do ambiente
+
+### Windows (local)
 https://github.com/luizmiguelgr/voice-param-extractor/blob/main/requirements.txt
-https://github.com/luizmiguelgr/voice-param-extractor/blob/main/env.example
+https://github.com/luizmiguelgr/voice-param-extractor/blob/main/.env.example
+
+### Docker (qualquer sistema operacional)
+https://github.com/luizmiguelgr/voice-param-extractor/blob/main/requirements.docker.txt
+https://github.com/luizmiguelgr/voice-param-extractor/blob/main/.env.example
+https://github.com/luizmiguelgr/voice-param-extractor/blob/main/Dockerfile
+https://github.com/luizmiguelgr/voice-param-extractor/blob/main/docker-compose.yml
