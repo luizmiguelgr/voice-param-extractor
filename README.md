@@ -53,7 +53,7 @@ Ambiente idêntico em qualquer sistema operacional.
 git clone https://github.com/luizmiguelgr/voice-param-extractor
 cd voice-param-extractor
 cp .env.example .env
-# Edite o .env e adicione sua GROQ_API_KEY ou OPENAI_API_KEY
+# Edite o .env e adicione sua GROQ_API_KEY
 docker compose run pipeline python -m src.pipeline
 ```
 
@@ -80,7 +80,6 @@ Crie um arquivo `.env` na raiz baseado no `.env.example`:
 ```
 LLM_PROVIDER=groq
 GROQ_API_KEY=sua_chave_aqui
-OPENAI_API_KEY=
 ```
 
 Obtenha sua chave gratuita em: https://console.groq.com
